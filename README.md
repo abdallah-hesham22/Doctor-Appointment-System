@@ -11,21 +11,21 @@ Frontend (plain HTML/CSS/JS)  --->  Api (ASP.NET Core 8 + EF Core)  --->  Databa
 ## Project structure
 
 ```
-ClinicManagementSystem/
-├── Api/                      → ASP.NET Core Web API + EF Core (backend)
-│   ├── Controllers/
-│   ├── Models/
-│   ├── Data/
-│   ├── DTOs/
-│   └── Program.cs
-├── Frontend/                 → Static HTML/CSS/JS client (no frameworks)
-│   ├── index.html            → Landing page (choose Patient / Doctor)
-│   ├── patient/               → login.html, dashboard.html
-│   ├── doctor/                 → login.html, dashboard.html
-│   ├── js/api.js                → API client (fetch wrapper)
-│   └── assets/                   → app.css + background image
+Doctor-Appointment-System/
+├── Controllers/               → API controllers (Patients, Doctors, Appointments)
+├── Models/                    → EF Core entities
+├── Data/                      → ClinicDbContext (EF Core)
+├── DTOs/                      → Request/response DTOs
+├── Program.cs                 → App startup, DI, Swagger, CORS
+├── appsettings.json
+├── Frontend/                  → Static HTML/CSS/JS client (no frameworks)
+│   ├── index.html
+│   ├── patient/
+│   ├── doctor/
+│   ├── js/api.js
+│   └── assets/
 ├── Database/
-│   └── Schema.sql             → Raw T-SQL: tables, FKs, seed data
+│   └── Schema.sql
 └── Docs/
     ├── ERD-Diagram.png
     └── ERD-Diagram.svg
