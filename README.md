@@ -86,7 +86,7 @@ immediately.
 
 **Option B — EF Core migrations** (if you want to demonstrate Code-First EF instead)
 ```bash
-cd Api
+
 dotnet tool install --global dotnet-ef   # only needed once
 dotnet ef migrations add InitialCreate
 dotnet ef database update
