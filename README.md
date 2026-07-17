@@ -93,7 +93,7 @@ dotnet ef database update
 ```
 
 By default the API connects to `(localdb)\mssqllocaldb` (see
-`Api/appsettings.json` → `ConnectionStrings:ClinicDb`). If you're using a
+`appsettings.json` → `ConnectionStrings:ClinicDb`). If you're using a
 different SQL Server instance, update that connection string first.
 
 ### 2. Run the API
