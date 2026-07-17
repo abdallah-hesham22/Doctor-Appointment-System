@@ -98,7 +98,6 @@ different SQL Server instance, update that connection string first.
 
 ### 2. Run the API
 ```bash
-cd Api
 dotnet restore
 dotnet run
 ```
