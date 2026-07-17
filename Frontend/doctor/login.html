@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Doctor Login - Clinic Management System</title>
+    <link rel="stylesheet" href="../assets/css/app.css" />
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">🏥 Clinic Management System</a>
+        </div>
+    </nav>
+
+    <div class="container-narrow" style="margin-top:40px;">
+        <div id="alertBox" class="alert"></div>
+
+        <div class="panel">
+            <h3 class="section-title">🩺 Doctor Sign In</h3>
+            <p>Enter the email you're registered with to access your dashboard.</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" class="form-control" id="loginEmail" required placeholder="e.g. amina.salah@clinic.com" />
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Continue</button>
+            </form>
+            <p class="hint">
+                Doctor accounts are created by clinic staff. Sample accounts:
+                <code>amina.salah@clinic.com</code>, <code>omar.farid@clinic.com</code>.
+            </p>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            hideAlert();
+            const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+
+            try {
+                const doctors = await Api.getDoctors();
+                const match = doctors.find(d => d.email.toLowerCase() === email);
+                if (!match) {
+                    showAlert("No doctor found with that email.");
+                    return;
+                }
+                Session.setDoctor(match);
+                window.location.href = "dashboard.html";
+            } catch (err) {
+                showAlert(err.message);
+            }
+        });
+    </script>
+</body>
+</html>

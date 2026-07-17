@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Doctor Dashboard - Clinic Management System</title>
+    <link rel="stylesheet" href="../assets/css/app.css" />
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">🏥 Clinic Management System</a>
+            <ul class="navbar-links">
+                <li><a href="#" id="logoutLink">Log Out</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container" style="margin-top:25px;">
+        <div id="alertBox" class="alert"></div>
+
+        <div class="row">
+            <div class="col">
+                <div class="panel">
+                    <h3 class="section-title">🪪 My Profile</h3>
+                    <p><strong>Name:</strong> <span id="dName"></span></p>
+                    <p><strong>Email:</strong> <span id="dEmail"></span></p>
+                    <p><strong>Specialization:</strong> <span id="dSpec"></span></p>
+                    <p><strong>Phone:</strong> <span id="dPhone"></span></p>
+                </div>
+            </div>
+
+            <div class="col-wide">
+                <div class="panel">
+                    <h3 class="section-title">📅 My Appointments</h3>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Reason</th>
+                                <th style="min-width:230px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointmentsBody">
+                            <tr><td colspan="5" class="text-center text-muted">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script>
+        const doctor = Session.getDoctor();
+        if (!doctor) {
+            window.location.href = "login.html";
+        }
+
+        document.getElementById("dName").textContent = doctor.fullName;
+        document.getElementById("dEmail").textContent = doctor.email;
+        document.getElementById("dSpec").textContent = doctor.specialization;
+        document.getElementById("dPhone").textContent = doctor.phoneNumber || "—";
+
+        document.getElementById("logoutLink").addEventListener("click", (e) => {
+            e.preventDefault();
+            Session.clearDoctor();
+            window.location.href = "../index.html";
+        });
+
+        async function loadAppointments() {
+            const body = document.getElementById("appointmentsBody");
+            try {
+                const appointments = await Api.getDoctorAppointments(doctor.id);
+                if (appointments.length === 0) {
+                    body.innerHTML = `<tr><td colspan="5" class="text-center text-muted">No appointments yet.</td></tr>`;
+                    return;
+                }
+                body.innerHTML = appointments.map(a => `
+                    <tr>
+                        <td>${a.patientName ?? ("Patient #" + a.patientId)}</td>
+                        <td>${new Date(a.appointmentDate).toLocaleString()}</td>
+                        <td>${statusBadge(a.status)}</td>
+                        <td>${a.reason ?? "—"}</td>
+                        <td>
+                            ${a.status === 0 ? `
+                                <button class="btn btn-success btn-sm" onclick="setStatus(${a.id}, 1)">Approve</button>
+                                <button class="btn btn-danger btn-sm" onclick="setStatus(${a.id}, 2)">Reject</button>
+                            ` : ""}
+                            ${a.status === 1 ? `
+                                <button class="btn btn-info btn-sm" onclick="setStatus(${a.id}, 3)">Mark Completed</button>
+                            ` : ""}
+                        </td>
+                    </tr>
+                `).join("");
+            } catch (err) {
+                showAlert(err.message);
+            }
+        }
+
+        async function setStatus(appointmentId, status) {
+            let doctorNotes = null;
+            if (status === 1) doctorNotes = prompt("Optional note for the patient (e.g. arrival instructions):") || null;
+            if (status === 2) doctorNotes = prompt("Reason for rejecting (shown to the patient):") || null;
+            if (status === 3) doctorNotes = prompt("Optional visit summary / treatment notes:") || null;
+
+            try {
+                await Api.updateAppointmentStatus(appointmentId, { status, doctorNotes });
+                showAlert("Appointment updated.", "success");
+                loadAppointments();
+            } catch (err) {
+                showAlert(err.message);
+            }
+        }
+
+        loadAppointments();
+    </script>
+</body>
+</html>
