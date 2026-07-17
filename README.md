@@ -7,8 +7,6 @@ and **Doctor** — built as three clean, separate layers:
 Frontend (plain HTML/CSS/JS)  --->  Api (ASP.NET Core 8 + EF Core)  --->  Database (SQL Server)
 ```
 
-No frameworks, no CDNs, no build step anywhere in the frontend — just HTML,
-one CSS file, and one JS file per page, talking to the API with `fetch()`.
 
 ## Project structure
 
